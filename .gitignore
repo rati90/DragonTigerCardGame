@@ -1,0 +1,11 @@
+# ignore ALL .log files
+*.log
+
+# ignore ALL files in ANY directory named temp
+temp/
+
+*idea
+
+*__pycache__
+
+*pytest_cache
