@@ -28,18 +28,19 @@ async def find_a_winner(dragon: str, tiger: str, cards: dict):
         return 'tie'
 
 
-async def bet_win(dragon_bet, tiger_bet, tie_bet, winner_card):
+async def bet_win(bet_amount: int, bet_card: str, winner_card):
     """
     functions calculates winners money
-    :param dragon_bet: int, player what bet on dragon
-    :param tiger_bet: int, player what bet on tiger
-    :param tie_bet: int, player what bet on dragon
+    :param bet_amount: int, player what bet
+    :param bet_card: str, on which card he bet
     :param winner_card: str of winner card
-    :return: tuple, with information wining money
+    :return: int, with information wining money
     """
-    if winner_card == 'dragon':
-        return dragon_bet * 1, 0, 0
-    if winner_card == 'tiger':
-        return 0, tiger_bet * 1, 0
-    if winner_card == 'tie':
-        return 0, 0, tie_bet * 8
+    if winner_card == 'dragon' and bet_card == 'dragon':
+        return bet_amount * 1
+    elif winner_card == 'tiger' and bet_card == 'tiger':
+        return bet_amount * 1
+    elif winner_card == 'tie' and bet_card == 'tie':
+        return bet_amount * 8
+    else:
+        return 0
