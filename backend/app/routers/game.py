@@ -1,24 +1,22 @@
 from typing import Optional, List
-
+from datetime import datetime
 from beanie import Document
 
 
 class Game(Document):
     name: str
-    min_bet: float
-    max_bet: float
+    min_bet: float = 0
+    max_bet: float = 0
 
 
 class Round(Document):
     game_id: str
-    start_time: float
-    finish_time: float
-    dragon_card: str
-    tiger_card: str
-    winner: str
-    card_left: int
-    card_passed: int
-    finish: bool
+    finish_time: float = datetime.timestamp(datetime.now()) + 15
+    dragon_card: str = None
+    tiger_card: str = None
+    winner: str = None
+    card_passed: int = 0
+    finish: bool = False
 
 
 class GamePlayer(Document):

@@ -11,7 +11,7 @@ from ..internal.gameservices.gamesettings import check_game_id, check_round_id, 
     deck_update, check_round_time, check_deposit, update_balance_minus, update_balance_plus, check_min_max_bet,  \
     check_game_bets
 from ..internal.gameservices.gamelogic import find_a_winner, bet_win
-from ..internal.gameservices.cardsshuffle import CardsStart, cards
+
 from ..internal.services.authontication import get_password_hash, authenticate_user, create_access_token, \
     get_current_user
 
@@ -23,15 +23,14 @@ time_stamp_now = datetime.timestamp(datetime.now())
 
 @router.post('/game', tags=["Game"])
 async def new_game(game_data: Game):
-
     await check_game_bets(game_data)
-
     return await game_data.save()
 
 
 @router.get('/allgames/', tags=["Game"])
 async def show_all_game():
     return await Game.find_all().to_list()
+    #return await Game.find_all().delete()
 
 
 # ------------- Round ------------------------
