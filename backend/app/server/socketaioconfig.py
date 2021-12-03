@@ -67,6 +67,7 @@ async def place_bet(sid, data):
     gamer_in.round_id = round_id
     gamer_in.total_bet = bet_amount
     gamer_in.money_won = money_won
+    await gamer_in.save()
 
     print(money_won)
     print(data)
