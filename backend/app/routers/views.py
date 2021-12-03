@@ -7,10 +7,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.routers.game import Game, Round, GamePlayer, User
 from .userout import UserOut
 from ..config import settings
-from ..internal.gameservices.gamesettings import check_game_id, check_round_id, get_current_deck, \
-    deck_update, check_round_time, check_deposit, update_balance_minus, update_balance_plus, check_min_max_bet,  \
+from ..internal.gameservices.gamesettings import check_game_id, check_round_id, \
+    check_round_time, check_deposit, update_balance_minus, update_balance_plus, check_min_max_bet,  \
     check_game_bets
-from ..internal.gameservices.gamelogic import find_a_winner, bet_win
+from ..internal.gameservices.gamelogic import bet_win
 
 from ..internal.services.authontication import get_password_hash, authenticate_user, create_access_token, \
     get_current_user
@@ -40,21 +40,8 @@ async def new_round(round: Round, game_id: str):
     round.game_id = await check_game_id(game_id)
 
     round.start_time = time_stamp_now
-    round.finish_time = round.start_time + 100  # for biger use
+    round.finish_time = round.start_time + 100
 
-    #deck = await get_current_deck(round.game_id)
-
-    #round.dragon_card = deck[0][0]
-    #dragon = deck.pop(0)
-    #round.tiger_card = deck[0][0]
-    #tiger = deck.pop(0)
-
-    #round.winner = await find_a_winner(dragon, tiger)
-
-    #await deck_update(game_id, deck)
-
-    #round.card_left = len(deck)
-    #round.card_passed = 416 - len(deck)
 
     if round.finish_time >= time_stamp_now:
         round.finish = False

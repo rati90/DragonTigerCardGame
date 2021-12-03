@@ -1,11 +1,12 @@
 import socketio
 from urllib.parse import parse_qs
 from beanie import PydanticObjectId
+from fastapi import Depends
 
-
-from ..routers.game import Game, Round
+from ..routers.game import Game, Round, GamePlayer, User
 from .queries import get_or_create_game_round
 from ..internal.gameservices.gamelogic import find_a_winner, cards, bet_win
+from ..internal.services.authontication import get_current_user
 
 sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins=[])
 sio_app = socketio.ASGIApp(sio)
@@ -52,24 +53,25 @@ async def scan_card(sid, data):
 @sio.event
 async def place_bet(sid, data):
     bet_amount = data['amount']
-
     bet_card = data['type']
     round_id = data['round_id']['game_round_id']
 
+    gamer_in = GamePlayer #need the dependences on User
+
     round = await Round.get(PydanticObjectId(round_id))
-    print(round)
+
     money_won = await bet_win(bet_amount, bet_card, round.winner)
     await sio.emit('send_winner_money', {'money_won': money_won})
 
+    gamer_in.game_id = round.game_id
+    gamer_in.round_id = round_id
+    gamer_in.total_bet = bet_amount
+    gamer_in.money_won = money_won
+
+    print(money_won)
     print(data)
 
 
-
-
-@sio.event
-async def receive_target(sid, data):
-    target = data.get('target')
-    await sio.emit("sdasd", data)
 
 
 @sio.event
