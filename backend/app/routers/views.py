@@ -30,8 +30,11 @@ async def new_game(game_data: Game):
 @router.get('/allgames/', tags=["Game"])
 async def show_all_game():
     return await Game.find_all().to_list()
-    #return await Game.find_all().delete()
 
+
+@router.get('/allgames/delete', tags=["Game"])
+async def delete_all_game():
+    return await Game.find_all().delete()
 
 # ------------- Round ------------------------
 

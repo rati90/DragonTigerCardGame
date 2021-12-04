@@ -9,7 +9,7 @@ from .config import settings
 from .routers.game import Game, Round, GamePlayer, User
 
 from .routers.views import router
-from .server.socketaioconfig import sio_app
+from .server.socketaio import sio_app
 
 
 def create_app() -> FastAPI:
