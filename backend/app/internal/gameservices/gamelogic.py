@@ -12,7 +12,7 @@ cards = {'ah': 1, 'kh': 13, 'qh': 12, 'jh': 11, '2h': 2, '3h': 3,
          }
 
 
-async def find_a_winner(dragon: str, tiger: str, cards: dict):
+async def find_a_winner_card(dragon: str, tiger: str, cards: dict):
     """
     functions decides the winner side or tie
     :param cards: dict of all cards with the values

@@ -41,16 +41,7 @@ async def delete_all_game():
 @router.post('/round', tags=['Round'])
 async def new_round(round: Round, game_id: str):
     round.game_id = await check_game_id(game_id)
-
-    round.start_time = time_stamp_now
-    round.finish_time = round.start_time + 100
-
-
-    if round.finish_time >= time_stamp_now:
-        round.finish = False
-    else:
-        round.finish = True
-        print("time is out")
+    round.finish_time = datetime.timestamp(datetime.now()) + 15
 
     return await round.save()
 

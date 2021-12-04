@@ -4,7 +4,7 @@ from beanie import PydanticObjectId
 
 from ..routers.game import Game, Round, GamePlayer
 from .queries import get_or_create_game_round, get_or_create_game_player, add_bets_in, give_all_winner_money
-from ..internal.gameservices.gamelogic import find_a_winner, cards, bet_win
+from ..internal.gameservices.gamelogic import find_a_winner_card, cards
 
 sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins=[])
 sio_app = socketio.ASGIApp(sio)
@@ -45,11 +45,9 @@ async def scan_card(sid, data):
         game_round.card_passed += 1
         await sio.emit("send_tiger_card", {"card": card}, room=game_round.game_id)
 
-        game_round.winner = await find_a_winner(game_round.dragon_card, game_round.tiger_card, cards)
+        game_round.winner = await find_a_winner_card(game_round.dragon_card, game_round.tiger_card, cards)
 
         await give_all_winner_money(game_round)
-
-        await game_round.save()
 
         await sio.emit('send_winner', {'winner': game_round.winner}, room=game_round.game_id)
         print(game_round)
@@ -66,13 +64,8 @@ async def place_bet(sid, data):
     gamer_in = await get_or_create_game_player(round)
 
     await add_bets_in(gamer_in, bet_card, bet_amount)
+
     print(gamer_in)
-
-    '''money_won = await bet_win(bet_amount, bet_card, round.winner)
-    await sio.emit('send_winner_money', {'money_won': money_won})
-    gamer_in.money_won = money_won'''
-
-    print(data)
 
 
 @sio.event

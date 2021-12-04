@@ -19,6 +19,12 @@ async def get_or_create_game_round(game_id: str):
 
 
 async def get_or_create_game_player(round):
+    """
+    When betting checks if the game playes exists
+    if not created one
+    :param round: document of the current round
+    :return: returns existed game or creates the one and saves
+    """
     gamer_in = await GamePlayer.find_one(GamePlayer.game_id == round.game_id,
                                          GamePlayer.round_id == str(round.id))
     if gamer_in:
@@ -29,6 +35,13 @@ async def get_or_create_game_player(round):
 
 
 async def add_bets_in(gamer_in, bet_card, bet_amount):
+    """
+    Add bets the amount is choice from the front
+    :param gamer_in: Currtenr GamePlayer
+    :param bet_card: str the card it is betting
+    :param bet_amount: int the amount it is betting
+    :return: saves in GamePlayer Document
+    """
     gamer_in.total_bet += bet_amount
 
     if bet_card == "dragon":
@@ -42,23 +55,23 @@ async def add_bets_in(gamer_in, bet_card, bet_amount):
 
 
 async def give_all_winner_money(game_round):
-    winner_players = await GamePlayer.find_many(GamePlayer.round_id == str(game_round.id),
-                                                GamePlayer.dragon_bet > 0)
+    """
+    find all the player who betted at all.
+    then find who betted on winner cards and gives money the persons wins
+    :param game_round: Document of current round
+    :return: return saves round that is finished after giving money.
+    """
 
+    async for result in GamePlayer.find(GamePlayer.round_id == str(game_round.id),
+                                                GamePlayer.total_bet > 0):
+        if game_round.winner == 'dragon' and result.dragon_bet > 0:
+            result.money_won = result.dragon_bet * 2
+        if game_round.winner == 'tiger' and result.tiger_bet > 0:
+            result.money_won = result.tiger_bet * 2
+        if game_round.winner == 'tie' and result.tiger_bet > 0:
+            result.money_won = result.tiger_bet * 8
 
-    """if game_round.winner == "dragon":
-        winner_players = await GamePlayer.find_many(GamePlayer.round_id == str(game_round.id),
-                                                    GamePlayer.dragon_bet > 0).set(
-            {GamePlayer.money_won: 10})
-
-    if game_round.winner == 'tiger':
-        winner_players = await GamePlayer.find_many(GamePlayer.round_id == str(game_round.id),
-                                                    GamePlayer.tiger_bet > 0).set(
-            {GamePlayer.money_won: 10})
-
-    if game_round.winner == 'tie':
-        winner_players = await GamePlayer.find_many(GamePlayer.round_id == str(game_round.id),
-                                                    GamePlayer.tie_bet > 0).set(
-            {GamePlayer.money_won: 10})"""
+        print(result)
+        await result.save()
 
     return await game_round.save()
